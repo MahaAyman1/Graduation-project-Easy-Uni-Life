@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamed('VotingScreen');
+              Navigator.of(context).pushNamed('VotedList');
             },
             child: Text("Go To  'VotingScreen'"),
           ),
