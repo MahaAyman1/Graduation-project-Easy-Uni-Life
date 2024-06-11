@@ -12,7 +12,6 @@ import 'package:appwithapi/tutoring/homepage.dart';
 import 'package:appwithapi/tutoring/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'firebase_options.dart';
 
 void main() async {
@@ -48,7 +47,8 @@ class MyApp extends StatelessWidget {
         'VotingScreen': (context) => VotingScreen(),
         'CreateVoteForm': (context) => CreateVoteForm(),
         "VoteList": (context) => VoteList(),
-        'VotedList': (context) => VotedList()
+        'VotedList': (context) => VotedList(),
+        // 'NoteTakingWidget': (context) => NoteTakingWidget()
       },
     );
   }

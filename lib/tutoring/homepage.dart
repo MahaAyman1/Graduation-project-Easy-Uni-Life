@@ -31,12 +31,12 @@ class _HomeState extends State<Home> {
             },
             child: Text("Go To  'VotingScreen'"),
           ),
-          TextButton(
+          /* TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamed('CreateVoteForm');
+              Navigator.of(context).pushNamed('NoteTakingWidget');
             },
-            child: Text('CreateVoteForm'),
-          ),
+            child: Text('NoteTakingWidget'),
+          ),*/
           TextButton(
             onPressed: () {
               Navigator.of(context).pushNamed("VoteList");
