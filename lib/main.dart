@@ -1,11 +1,14 @@
 import 'package:appwithapi/Cstum/menu.dart';
 import 'package:appwithapi/authForStudent/studentLoginPag.dart';
 import 'package:appwithapi/authForStudent/studentRegistrationPage.dart';
+import 'package:appwithapi/connectingPage/firstconnetc.dart';
+import 'package:appwithapi/connectingPage/secondconnect.dart';
 import 'package:appwithapi/poll/CreateVoteForm.dart';
 import 'package:appwithapi/poll/list.dart';
 import 'package:appwithapi/poll/votelist.dart';
 import 'package:appwithapi/poll/voting.dart';
 import 'package:appwithapi/tutoring/Setting.dart';
+import 'package:appwithapi/tutoring/ThechingOrNot.dart';
 import 'package:appwithapi/tutoring/WanttoTech.dart';
 import 'package:appwithapi/tutoring/fltring.dart';
 import 'package:appwithapi/tutoring/homepage.dart';
@@ -48,7 +51,9 @@ class MyApp extends StatelessWidget {
         'CreateVoteForm': (context) => CreateVoteForm(),
         "VoteList": (context) => VoteList(),
         'VotedList': (context) => VotedList(),
-        // 'NoteTakingWidget': (context) => NoteTakingWidget()
+        'TeachOrNotScreen': (context) => TeachOrNotScreen(),
+        'Secondconnect': (context) => Secondconnect(),
+        'Firstconnet': (context) => Firstconnet()
       },
     );
   }

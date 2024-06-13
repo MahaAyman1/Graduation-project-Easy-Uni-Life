@@ -1021,7 +1021,6 @@ class _FitringState extends State<Fitring> {
               ));
         },
       ),
-      drawer: Menu(),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:appwithapi/Cstum/constant.dart';
 import 'package:appwithapi/Cstum/customTextField.dart';
 import 'package:appwithapi/authForStudent/studentRegistrationPage.dart';
+import 'package:appwithapi/connectingPage/firstconnetc.dart';
 import 'package:appwithapi/tutoring/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (BuildContext context) {
-            return ProfileScreen();
+            return Firstconnet();
           }),
         );
       } else {

@@ -31,24 +31,18 @@ class _HomeState extends State<Home> {
             },
             child: Text("Go To  'VotingScreen'"),
           ),
-          /* TextButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed('NoteTakingWidget');
-            },
-            child: Text('NoteTakingWidget'),
-          ),*/
           TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamed("VoteList");
+              Navigator.of(context).pushNamed('Secondconnect');
             },
-            child: Text("VoteList"),
+            child: Text('Secondconnect'),
           ),
-          /* TextButton(
+          TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamed('MarkerMapPage');
+              Navigator.of(context).pushNamed('Firstconnet');
             },
-            child: Text('MarkerMapPage'),
-          ),*/
+            child: Text('Firstconnet'),
+          ),
         ],
       ),
       drawer: Menu(),

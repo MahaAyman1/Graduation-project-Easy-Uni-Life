@@ -1,4 +1,5 @@
 import 'package:appwithapi/authForStudent/studentLoginPag.dart';
+import 'package:appwithapi/connectingPage/firstconnetc.dart';
 import 'package:appwithapi/tutoring/Setting.dart';
 import 'package:appwithapi/tutoring/homepage.dart';
 import 'package:appwithapi/tutoring/profile.dart';
@@ -101,7 +102,7 @@ class _MenuState extends State<Menu> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute<void>(
-                      builder: (BuildContext context) => const Home(),
+                      builder: (BuildContext context) => const Firstconnet(),
                     ),
                   );
                 },
