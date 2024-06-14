@@ -13,6 +13,8 @@ class CustomTextField extends StatelessWidget {
     this.validator, // Add validator parameter
     this.onSaved,
     this.onChanged,
+    this.readOnly = false,
+    String? errorText,
   }) : super(key: key);
 
   final String hint;
@@ -22,6 +24,7 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator; // Validator parameter
   final void Function(String?)? onSaved;
   final Function(String)? onChanged;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +45,7 @@ class CustomTextField extends StatelessWidget {
           }
         }
       },
+      readOnly: readOnly,
       cursorColor: kPrimaryColor,
       maxLines: maxLines,
       decoration: InputDecoration(

@@ -644,37 +644,6 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                   SizedBox(height: 20),
                   Row(
                     children: [
-                      /* Expanded(
-                        child: GestureDetector(
-                          onTap: () async {
-                            final DateTime? picked = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(1900),
-                              lastDate: DateTime.now(),
-                            );
-                            if (picked != null && picked != _selectedDate) {
-                              setState(() {
-                                _selectedDate = picked;
-                              });
-                            }
-                          },
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              hintText: 'Select your birthday',
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                            ),
-                            child: Text(
-                              _selectedDate != null
-                                  ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                                  : 'Select your birthday',
-                            ),
-                          ),
-                        ),
-                      ),*/
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {

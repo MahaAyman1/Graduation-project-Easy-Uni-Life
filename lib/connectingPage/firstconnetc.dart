@@ -23,10 +23,12 @@ class Firstconnet extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 50),
             children: [
               //  SizedBox(height: 100),
-              buildButton(context, 'images/1.jpg', 'Housing', "Fitring"),
-              //  SizedBox(height: 30),
               buildButton(
-                  context, 'images/e2.jpg', 'Exchang Book', 'VotedList'),
+                  context, 'images/1.jpg', 'Housing', "ForgotPasswordScreen"),
+              //  SizedBox(height: 30),
+              buildButton(context, 'images/e2.jpg', 'Exchang Book',
+                  'ResetPasswordPage'),
+              //'CollegeListPage'),
               buildButton(
                   context, 'images/y2.jpg', "Let's Study", 'Secondconnect')
             ],

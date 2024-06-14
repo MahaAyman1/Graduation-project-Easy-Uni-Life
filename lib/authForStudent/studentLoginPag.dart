@@ -1,5 +1,6 @@
 import 'package:appwithapi/Cstum/constant.dart';
 import 'package:appwithapi/Cstum/customTextField.dart';
+import 'package:appwithapi/authForStudent/ResetPasswordPage.dart';
 import 'package:appwithapi/authForStudent/studentRegistrationPage.dart';
 import 'package:appwithapi/connectingPage/firstconnetc.dart';
 import 'package:appwithapi/tutoring/profile.dart';
@@ -115,7 +116,25 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
                 controller: passwordController,
                 obscureText: true,
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ResetPasswordPage()),
+                        );
+                      },
+                      child: Text(
+                        "Forgot password?",
+                        style: TextStyle(color: Colors.white),
+                      )),
+                ],
+              ),
+              SizedBox(height: 20),
               Center(
                 child: SizedBox(
                   width: 170,

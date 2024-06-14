@@ -1,6 +1,15 @@
 import 'package:appwithapi/Cstum/menu.dart';
+import 'package:appwithapi/Housing/HousesPage.dart';
+import 'package:appwithapi/Housing/addhousepage.dart';
+import 'package:appwithapi/Housing/housedetailspage.dart';
+import 'package:appwithapi/authForStudent/ResetPasswordPage.dart';
 import 'package:appwithapi/authForStudent/studentLoginPag.dart';
 import 'package:appwithapi/authForStudent/studentRegistrationPage.dart';
+import 'package:appwithapi/book/addbookpage.dart';
+import 'package:appwithapi/book/collegelistpage.dart';
+import 'package:appwithapi/book/departmentlistpage.dart';
+import 'package:appwithapi/book/displaybookpage.dart';
+import 'package:appwithapi/book/exchangebookpage.dart';
 import 'package:appwithapi/connectingPage/firstconnetc.dart';
 import 'package:appwithapi/connectingPage/secondconnect.dart';
 import 'package:appwithapi/poll/CreateVoteForm.dart';
@@ -53,7 +62,17 @@ class MyApp extends StatelessWidget {
         'VotedList': (context) => VotedList(),
         'TeachOrNotScreen': (context) => TeachOrNotScreen(),
         'Secondconnect': (context) => Secondconnect(),
-        'Firstconnet': (context) => Firstconnet()
+        'Firstconnet': (context) => Firstconnet(),
+        'CollegeListPage': (context) => CollegeListPage(),
+        ' AddBookPage': (context) => AddBookPage(),
+        ' DepartmentListPage': (context) => DepartmentListPage(),
+        'ExchangeBookPage': (context) => ExchangeBookPage(),
+        'DisplayBookPage': (context) => DisplayBookPage(),
+        '/houses': (context) => HousingPage(),
+        '/addHouse': (context) => AddHousePage(),
+        '/HouseDetailsPage': (context) =>
+            DisplayHouseDetailPage(houseDetails: HouseDetails.defaultData()),
+        'ResetPasswordPage': (context) => ResetPasswordPage()
       },
     );
   }
