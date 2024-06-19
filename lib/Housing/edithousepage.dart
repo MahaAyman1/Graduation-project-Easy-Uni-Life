@@ -24,7 +24,6 @@ class _EditHousePageState extends State<EditHousePage> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController numRoomsController = TextEditingController();
   final TextEditingController numBathroomsController = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
   final TextEditingController numOccupantsController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
@@ -35,11 +34,11 @@ class _EditHousePageState extends State<EditHousePage> {
   void initState() {
     super.initState();
     houseNameController.text = widget.houseData['houseName'];
-    priceController.text = widget.houseData['price'];
-    numRoomsController.text = widget.houseData['numRooms'];
-    numBathroomsController.text = widget.houseData['numBathrooms'];
+    priceController.text = widget.houseData['price'].toString();
+    numRoomsController.text = widget.houseData['numRooms'].toString();
+    numBathroomsController.text = widget.houseData['numBathrooms'].toString();
     _selectedGender = widget.houseData['gender'];
-    numOccupantsController.text = widget.houseData['numOccupants'];
+    numOccupantsController.text = widget.houseData['numOccupants'].toString();
     emailController.text = widget.houseData['email'];
     imageUrls = List<String>.from(widget.houseData['imageUrls'] ?? []);
   }
@@ -55,48 +54,46 @@ class _EditHousePageState extends State<EditHousePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 8),
             CustomTextField(
-              hint: 'House Name',
+              label: 'House Name',
+              hint: 'Enter House Name',
               controller: houseNameController,
             ),
             SizedBox(height: 20),
+
+            SizedBox(height: 8),
             CustomTextField(
-              hint: 'Price',
+              label: 'Price',
+              hint: 'Enter Price',
               controller: priceController,
             ),
             SizedBox(height: 20),
+
+            SizedBox(height: 8),
             CustomTextField(
-              hint: 'Number of Rooms',
+              label: 'Number of Rooms',
+              hint: 'Enter Number of Rooms',
               controller: numRoomsController,
             ),
             SizedBox(height: 20),
+
+            SizedBox(height: 8),
             CustomTextField(
-              hint: 'Number of Bathrooms',
+              label: 'Number of Bathrooms',
+              hint: 'Enter Number of Bathrooms',
               controller: numBathroomsController,
             ),
             SizedBox(height: 20),
-            /*
-            CustomTextField(
-              hint: 'Gender',
-              controller: genderController,
-            ),*/
-            SizedBox(height: 20),
-            CustomTextField(
-              hint: 'Number of Occupants',
-              controller: numOccupantsController,
+            Text(
+              'Gender',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 20),
-            CustomTextField(
-              hint: 'Contact Email',
-              controller: emailController,
-            ),
-            SizedBox(height: 20),
-            /* ElevatedButton(
-              onPressed: _pickImages,
-              child: Text('Add Images'),
-            ),
-*/
-
+            SizedBox(height: 8),
+            //SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -131,7 +128,7 @@ class _EditHousePageState extends State<EditHousePage> {
                     ),
                     DropdownMenuItem(
                       value: 'male and female',
-                      child: Text('Male and female',
+                      child: Text('Male and Female',
                           style: TextStyle(
                               color: const Color.fromARGB(255, 98, 97, 97))),
                     ),
@@ -139,15 +136,23 @@ class _EditHousePageState extends State<EditHousePage> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            /*
-           ElevatedButton(
-                  onPressed: _pickImages,
-                  child: Text('Add Images'),
-                ),*/
+            SizedBox(height: 20),
 
+            SizedBox(height: 8),
+            CustomTextField(
+              label: 'Number of Occupants',
+              hint: 'Enter Number of Occupants',
+              controller: numOccupantsController,
+            ),
+            SizedBox(height: 20),
+
+            SizedBox(height: 8),
+            CustomTextField(
+              label: 'Contact Email',
+              hint: 'Enter Contact Email',
+              controller: emailController,
+            ),
+            SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
@@ -258,11 +263,11 @@ class _EditHousePageState extends State<EditHousePage> {
       try {
         final updatedHouseData = {
           'houseName': houseNameController.text,
-          'price': priceController.text,
-          'numRooms': numRoomsController.text,
-          'numBathrooms': numBathroomsController.text,
-          'gender': _selectedGender,
-          'numOccupants': numOccupantsController.text,
+          'price': double.tryParse(priceController.text) ?? 0.0,
+          'numRooms': int.tryParse(numRoomsController.text) ?? 0,
+          'numBathrooms': int.tryParse(numBathroomsController.text) ?? 0,
+          'gender': _selectedGender ?? '',
+          'numOccupants': int.tryParse(numOccupantsController.text) ?? 0,
           'email': emailController.text,
           'imageUrls': imageUrls,
         };
@@ -305,7 +310,6 @@ class _EditHousePageState extends State<EditHousePage> {
     priceController.dispose();
     numRoomsController.dispose();
     numBathroomsController.dispose();
-    genderController.dispose();
     numOccupantsController.dispose();
     emailController.dispose();
     super.dispose();

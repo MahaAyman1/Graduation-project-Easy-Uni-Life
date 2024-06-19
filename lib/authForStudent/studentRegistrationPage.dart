@@ -540,8 +540,8 @@ class _StudentRegistrationPageState extends State<StudentRegistrationPage> {
                       } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                           .hasMatch(value)) {
                         return 'Please enter a valid email';
-                      } else if (!value.endsWith('.edu.jo')) {
-                        return 'Email must end with .edu.jo domain';
+                      } else if (!value.endsWith('just.edu.jo')) {
+                        return 'Email must end with just.edu.jo domain';
                       }
                       return null;
                     },

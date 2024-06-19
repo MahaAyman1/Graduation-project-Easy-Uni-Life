@@ -2,6 +2,8 @@ import 'package:appwithapi/Cstum/menu.dart';
 import 'package:appwithapi/Housing/HousesPage.dart';
 import 'package:appwithapi/Housing/addhousepage.dart';
 import 'package:appwithapi/Housing/housedetailspage.dart';
+import 'package:appwithapi/authForStudent/HouseOwnerLoginPage.dart';
+import 'package:appwithapi/authForStudent/HouseOwnerRegistrationPage.dart';
 import 'package:appwithapi/authForStudent/ResetPasswordPage.dart';
 import 'package:appwithapi/authForStudent/studentLoginPag.dart';
 import 'package:appwithapi/authForStudent/studentRegistrationPage.dart';
@@ -41,9 +43,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Student LoginPage',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       initialRoute: '/ LoginStateless',
       routes: {
         '/ LoginStateless': (context) => StudentLoginPage(),
@@ -72,7 +71,9 @@ class MyApp extends StatelessWidget {
         '/addHouse': (context) => AddHousePage(),
         '/HouseDetailsPage': (context) =>
             DisplayHouseDetailPage(houseDetails: HouseDetails.defaultData()),
-        'ResetPasswordPage': (context) => ResetPasswordPage()
+        'ResetPasswordPage': (context) => ResetPasswordPage(),
+        'houseownerloginpage': (context) => HouseOwnerLoginPage(),
+        'houseownerregister': (context) => HouseOwnerRegistrationPage(),
       },
     );
   }

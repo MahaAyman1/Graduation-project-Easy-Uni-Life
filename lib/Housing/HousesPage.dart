@@ -1,111 +1,24 @@
-
-/*
-class housecards extends StatelessWidget {
-  const housecards({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Image.asset(
-              'images/house.jpg',
-              width: 150,
-              height: 150, 
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      'title',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    'price',
-                    style: TextStyle(
-                      fontSize: 14.0, color: Colors.yellow
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Row(
-                    children: [
-                      Icon(Icons.people), 
-                      SizedBox(width: 4.0),
-                      Text(
-                        "4", 
-                        style: TextStyle(fontSize: 14.0), 
-                      ),
-                      SizedBox(width: 16.0),
-                      Icon(Icons.home), 
-                      SizedBox(width: 4.0),
-                      Text(
-                        "3", 
-                        style: TextStyle(fontSize: 14.0), 
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'package:appwithapi/Housing/addhousepage.dart';
-import 'package:appwithapi/Housing/housedetailspage.dart';
+import 'package:appwithapi/Housing/myhouse.dart';
+import 'package:appwithapi/authForStudent/HouseOwnerLoginPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-
-
-
-/*
-
-
-class HousingPage extends StatelessWidget {
+class HousingPage extends StatefulWidget {
   const HousingPage({Key? key}) : super(key: key);
+
+  @override
+  _HousingPageState createState() => _HousingPageState();
+}
+
+class _HousingPageState extends State<HousingPage> {
+  double? _minPrice;
+  double? _maxPrice;
+  String? _selectedGender;
+  int? _selectedBathroom;
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +27,32 @@ class HousingPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Houses'),
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Color(0xff0f1035),
+        title: Text(
+          'Houses',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.home),
+            tooltip: 'My House ',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return MyHousingPage();
+                  },
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.filter_alt),
+            tooltip: 'Filter',
+            onPressed: _showFilterDialog,
+          ),
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: 'Add House',
@@ -125,6 +62,21 @@ class HousingPage extends StatelessWidget {
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) {
                     return AddHousePage();
+                  },
+                ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Log Out ',
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return HouseOwnerLoginPage();
                   },
                 ),
               );
@@ -146,18 +98,31 @@ class HousingPage extends StatelessWidget {
             }
 
             final List<DocumentSnapshot> houseDocs = snapshot.data!.docs;
+            final filteredHouseDocs = _filterHouses(houseDocs);
+
             return GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1, 
+                crossAxisCount: 1,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
-              itemCount: houseDocs.length, 
+              itemCount: filteredHouseDocs.length,
               itemBuilder: (context, index) {
-                final houseData = houseDocs[index].data() as Map<String, dynamic>;
+                final houseData =
+                    filteredHouseDocs[index].data() as Map<String, dynamic>;
+                final List<String> imageUrls =
+                    List<String>.from(houseData['imageUrls'] ?? []);
                 return HouseItem(
                   houseName: houseData['houseName'] ?? '',
-                  housePrice: houseData['price'] ?? '',
-                  occupants: int.tryParse(houseData['numOccupants'].toString()) ?? 0,
-                  rooms: int.tryParse(houseData['numRooms'].toString()) ?? 0,
+                  housePrice: houseData['price'] ?? 0.0,
+                  occupants: houseData['numOccupants'] ?? 0,
+                  rooms: houseData['numRooms'] ?? 0,
+                  imageUrls: imageUrls,
+                  userId: houseData['userId'],
+                  gender: houseData['gender'] ?? '',
+                  email: houseData['email'] ?? '',
+                  bathrooms: houseData['numBathrooms'] ?? 0,
+                  houseId: houseDocs[index].id,
                 );
               },
             );
@@ -166,272 +131,155 @@ class HousingPage extends StatelessWidget {
       ),
     );
   }
-}
 
+  List<DocumentSnapshot> _filterHouses(List<DocumentSnapshot> houseDocs) {
+    return houseDocs.where((house) {
+      final houseData = house.data() as Map<String, dynamic>;
 
-class HouseItem extends StatelessWidget {
-  final String houseName;
-  final String housePrice;
-  final int occupants;
-  final int rooms;
+      if (_minPrice != null && houseData['price'] < _minPrice! ||
+          _maxPrice != null && houseData['price'] > _maxPrice!) {
+        return false;
+      }
 
-  const HouseItem({
-    required this.houseName,
-    required this.housePrice,
-    required this.occupants,
-    required this.rooms,
-  });
+      if (_selectedGender != null && houseData['gender'] != _selectedGender) {
+        return false;
+      }
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-           Image.asset(
-              'images/house.jpg',
-              width: 440,
-              height: 200, 
-            ),
-          
-          Padding(
-            padding: const EdgeInsets.all(8.0),
+      if (_selectedBathroom != null &&
+          houseData['numBathrooms'] != _selectedBathroom) {
+        return false;
+      }
+
+      return true;
+    }).toList();
+  }
+
+  void _showFilterDialog() {
+    TextEditingController minPriceController = TextEditingController();
+    TextEditingController maxPriceController = TextEditingController();
+
+    ValueNotifier<String?> selectedGenderNotifier =
+        ValueNotifier<String?>(_selectedGender);
+    ValueNotifier<int?> selectedBathroomNotifier =
+        ValueNotifier<int?>(_selectedBathroom);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Filters'),
+          content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  houseName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Price: $housePrice',
-                  style: TextStyle(color: Colors.yellow),
-                ),
-                SizedBox(height: 4),
+                Text('Price Range'),
                 Row(
                   children: [
-                    Icon(Icons.people),
-                    SizedBox(width: 4),
-                    Text('Occupants: $occupants'),
+                    Expanded(
+                      child: TextField(
+                        controller: minPriceController,
+                        decoration: InputDecoration(labelText: 'Min'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() {
+                            _minPrice =
+                                value.isNotEmpty ? double.parse(value) : null;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: maxPriceController,
+                        decoration: InputDecoration(labelText: 'Max'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() {
+                            _maxPrice =
+                                value.isNotEmpty ? double.parse(value) : null;
+                          });
+                        },
+                      ),
+                    ),
                   ],
                 ),
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.home),
-                    SizedBox(width: 4),
-                    Text('Rooms: $rooms'),
-                   SizedBox(width: 8),
-
-                      IconButton(
-      icon: FaIcon(FontAwesomeIcons.toilet,
-      color:  Colors.black,size: 20,), 
-      onPressed: () {  }
-     ),
-                    SizedBox(width: 4),
-                    Text('bathroom $rooms'),
-                  ],
+                SizedBox(height: 10),
+                Text('Gender'),
+                ValueListenableBuilder<String?>(
+                  valueListenable: selectedGenderNotifier,
+                  builder: (context, value, child) {
+                    return DropdownButton<String>(
+                      value: value,
+                      onChanged: (newValue) {
+                        selectedGenderNotifier.value = newValue;
+                        setState(() {
+                          _selectedGender = newValue;
+                        });
+                      },
+                      items: <String>['', 'male', 'female', 'male and female']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value.isNotEmpty ? value : 'Any Gender'),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+                SizedBox(height: 10),
+                Text('Number of Bathrooms'),
+                ValueListenableBuilder<int?>(
+                  valueListenable: selectedBathroomNotifier,
+                  builder: (context, value, child) {
+                    return DropdownButton<int>(
+                      value: value,
+                      onChanged: (newValue) {
+                        selectedBathroomNotifier.value = newValue;
+                        setState(() {
+                          _selectedBathroom = newValue;
+                        });
+                      },
+                      items: <int>[0, 1, 2, 3, 4, 5]
+                          .map<DropdownMenuItem<int>>((int? value) {
+                        return DropdownMenuItem<int>(
+                          value: value,
+                          child: Text(value != null ? value.toString() : 'Any'),
+                        );
+                      }).toList(),
+                    );
+                  },
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-*/
-
-
-
-
-
-
-class HousingPage extends StatelessWidget {
-  const HousingPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Houses'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add House',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return AddHousePage();
-                  },
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: firestore.collectionGroup('houses').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-
-            final List<DocumentSnapshot> houseDocs = snapshot.data!.docs;
-            return GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1, 
-              ),
-              itemCount: houseDocs.length, 
-              itemBuilder: (context, index) {
-                final houseData = houseDocs[index].data() as Map<String, dynamic>;
-                final List<String> imageUrls = List<String>.from(houseData['imageUrls'] ?? []);
-                  return HouseItem(
-                  houseName: houseData['houseName'] ?? '',
-                  housePrice: houseData['price'] ?? '',
-                  occupants: int.tryParse(houseData['numOccupants'].toString()) ?? 0,
-                  rooms: int.tryParse(houseData['numRooms'].toString()) ?? 0,
-                  imageUrls: imageUrls,
-                  userId: houseData['userId'],
-                  gender: houseData['gender'], // corrected to 'gender'
-                  email: houseData['email'],
-                  bathrooms: houseData['numBathrooms'], // added bathrooms
-);
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                minPriceController.clear();
+                maxPriceController.clear();
+                selectedGenderNotifier.value = null;
+                selectedBathroomNotifier.value = null;
+                setState(() {
+                  _minPrice = null;
+                  _maxPrice = null;
+                  _selectedGender = null;
+                  _selectedBathroom = null;
+                });
+                Navigator.of(context).pop();
               },
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class HouseItem extends StatelessWidget {
- final String houseName;
-  final String housePrice;
-  final int occupants;
-  final int rooms;
-  final List<String> imageUrls;
-  final String gender; // corrected to 'gender'
-  final String email;
-  final String userId;
-  final String bathrooms; // added bathrooms
-
-  const HouseItem({
-      required this.houseName,
-    required this.housePrice,
-    required this.occupants,
-    required this.rooms,
-    required this.imageUrls,
-    required this.gender,
-    required this.email,
-    //required this.phone,
-    required this.userId, required this.bathrooms,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    String? firstImageUrl = imageUrls.isNotEmpty ? imageUrls.first : null;
-
-    return GestureDetector(
-      onTap: (){
-        
-         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>DisplayHouseDetailPage(
-             houseDetails: HouseDetails(
-                houseName: houseName,
-                housePrice: housePrice,
-                occupants: occupants,
-                rooms: rooms,
-                imageUrls: imageUrls,
-                gender: gender,
-                email: email,
-                userId: userId,
-                bathrooms: bathrooms,
-              ),
+              child: Text('Clear'),
             ),
-          ),
-        );
-      },
-
-      child: Card(
-        
-        elevation: 4,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            firstImageUrl != null ? Image.network(
-              firstImageUrl,
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.cover,
-            ) : SizedBox.shrink(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    houseName,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Price: $housePrice',
-                    style: TextStyle(color: Colors.yellow),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.people),
-                      SizedBox(width: 4),
-                      Text('Occupants: $occupants'),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.home),
-                      SizedBox(width: 4),
-                      Text('Rooms: $rooms'),
-                     SizedBox(width: 8),
-                      IconButton(
-                        icon: FaIcon(FontAwesomeIcons.toilet, color: Colors.black, size: 20,), 
-                        onPressed: () {},
-                      ),
-                      SizedBox(width: 4),
-                      Text('bathroom $rooms'),
-                    ],
-                  ),
-                ],
-              ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Apply'),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
-

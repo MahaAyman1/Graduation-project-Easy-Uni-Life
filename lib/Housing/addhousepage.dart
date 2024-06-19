@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:appwithapi/Cstum/constant.dart';
 import 'package:appwithapi/Cstum/customTextField.dart';
+import 'package:appwithapi/Map/MarkerMapPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -20,8 +21,9 @@ class _AddHousePageState extends State<AddHousePage> {
   final TextEditingController numRoomsController = TextEditingController();
   final TextEditingController numBathroomsController = TextEditingController();
   final TextEditingController numOccupantsController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-
+  final locationController = TextEditingController();
+  double? latitude;
+  double? longitude;
   final FirestoreService firestoreService = FirestoreService();
 
   List<String> imageUrls = [];
@@ -54,7 +56,7 @@ class _AddHousePageState extends State<AddHousePage> {
                   controller: houseNameController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Field is required';
+                      return 'House name is required';
                     } else {
                       return null;
                     }
@@ -66,7 +68,9 @@ class _AddHousePageState extends State<AddHousePage> {
                   controller: priceController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Field is required';
+                      return 'Price is required';
+                    } else if (double.tryParse(value!) == null) {
+                      return 'Enter a valid price';
                     } else {
                       return null;
                     }
@@ -78,7 +82,9 @@ class _AddHousePageState extends State<AddHousePage> {
                   controller: numRoomsController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Field is required';
+                      return 'Number of rooms is required';
+                    } else if (int.tryParse(value!) == null) {
+                      return 'Enter a valid number';
                     } else {
                       return null;
                     }
@@ -90,7 +96,9 @@ class _AddHousePageState extends State<AddHousePage> {
                   controller: numBathroomsController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Field is required';
+                      return 'Number of bathrooms is required';
+                    } else if (int.tryParse(value!) == null) {
+                      return 'Enter a valid number';
                     } else {
                       return null;
                     }
@@ -102,19 +110,9 @@ class _AddHousePageState extends State<AddHousePage> {
                   controller: numOccupantsController,
                   validator: (value) {
                     if (value?.isEmpty ?? true) {
-                      return 'Field is required';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                SizedBox(height: 20),
-                CustomTextField(
-                  hint: 'Contact Email',
-                  controller: emailController,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) {
-                      return 'Field is required';
+                      return 'Number of occupants is required';
+                    } else if (int.tryParse(value!) == null) {
+                      return 'Enter a valid number';
                     } else {
                       return null;
                     }
@@ -213,6 +211,28 @@ class _AddHousePageState extends State<AddHousePage> {
                     ),
                   ),
                 SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: locationController,
+                        decoration: InputDecoration(labelText: 'Location'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a location';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: _selectLocation,
+                      child: Text('Pick Location'),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.only(right: 60.0, left: 60),
                   child: ElevatedButton(
@@ -269,17 +289,43 @@ class _AddHousePageState extends State<AddHousePage> {
       final houseData = {
         'userId': user.uid,
         'houseName': houseNameController.text,
-        'price': priceController.text,
-        'numRooms': numRoomsController.text,
-        'numBathrooms': numBathroomsController.text,
+        'price': double.parse(priceController.text),
+        'numRooms': int.parse(numRoomsController.text),
+        'numBathrooms': int.parse(numBathroomsController.text),
         'gender': _selectedGender,
-        'numOccupants': numOccupantsController.text,
-        'email': emailController.text,
+        'numOccupants': int.parse(numOccupantsController.text),
+        'email': user.email,
         'imageUrls': uploadedImageUrls,
+        'location': locationController.text,
+        'latitude': latitude,
+        'longitude': longitude,
       };
 
       await firestoreService.addHouse(user.uid, houseData);
       Navigator.pop(context);
+    }
+  }
+
+  void _selectLocation() async {
+    final selectedLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MarkerMapPage(
+          onLocationSelected: (latLng) {
+            setState(() {
+              latitude = latLng.latitude;
+              longitude = latLng.longitude;
+              locationController.text = 'Selected Location';
+            });
+          },
+        ),
+      ),
+    );
+
+    if (selectedLocation != null) {
+      setState(() {
+        locationController.text = 'Location Selected';
+      });
     }
   }
 
@@ -290,7 +336,6 @@ class _AddHousePageState extends State<AddHousePage> {
     numRoomsController.dispose();
     numBathroomsController.dispose();
     numOccupantsController.dispose();
-    emailController.dispose();
     super.dispose();
   }
 }
@@ -320,7 +365,7 @@ class FirestoreService {
   Future<void> addHouse(String userId, Map<String, dynamic> houseData) async {
     try {
       CollectionReference housesCollection =
-          firestore.collection('Students').doc(userId).collection('houses');
+          firestore.collection('users').doc(userId).collection('houses');
 
       await housesCollection.add(houseData);
 
@@ -331,8 +376,6 @@ class FirestoreService {
     }
   }
 }
-
-
 
 
 
