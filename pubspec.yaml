@@ -49,6 +49,7 @@ dependencies:
   date_field: ^5.2.1
   font_awesome_flutter: ^10.7.0
   google_sign_in: ^6.2.1
+  flutter_staggered_animations: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +83,7 @@ flutter:
     - images/y2.jpg
     - images/Free Photo _ 3d render books fly or fall on blue background.jpg
     - images/r1-removebg-preview.png
+    - images/darkIcon.png
 
   #   - images/a_dot_ham.jpeg
 

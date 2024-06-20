@@ -481,25 +481,30 @@ class _TeachOrEditScreenState extends State<TeachOrEditScreen> {
         'C++'
       ],
       'Information Technology': [
-        'Subject 4',
-        'Subject 5',
-        'Subject 6',
+        'Mobile Application Development',
+        'Human-Computer Interaction',
+        'Data Science',
       ],
+      'Artificial Intelligence': [
+        'Machine Learning',
+        'Robotics',
+        'Deep Learning',
+        'AI in Business'
+      ]
     },
     'Engineering': {
       'Mechanical Engineering': [
-        'Subject A',
-        'Subject B',
-        'Subject C',
+        'Fluid Mechanics',
+        'Mechatronics',
+        'Automotive Engineering',
       ],
       'Electrical Engineering': [
-        'Subject X',
-        'Subject Y',
-        'Subject Z',
+        'Power Electronics',
+        'Control Systems',
+        'Digital Electronics',
       ],
     },
   };
-
   String? Department;
   String? major;
   String? selectedSubject;

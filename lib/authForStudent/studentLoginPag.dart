@@ -26,6 +26,12 @@ class _StudentLoginPageState extends State<StudentLoginPage> {
         return;
       }
 
+      // Check if email is from the ".edu.jo" domain
+      if (!emailController.text.trim().endsWith('.edu.jo')) {
+        showErrorDialog('Email must be from the ".edu.jo" domain.');
+        return;
+      }
+
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text.trim(),

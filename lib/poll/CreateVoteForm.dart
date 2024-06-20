@@ -130,7 +130,7 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
   double? _latitude;
   double? _longitude;
 
-  final Map<String, Map<String, List<String>>> _departmentMajorSubject = {
+  /*final Map<String, Map<String, List<String>>> _departmentMajorSubject = {
     'Computer and Information Technology': {
       'Computer Science': [
         'Algorithms and Data Structures',
@@ -158,7 +158,41 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
       ],
     },
   };
-
+*/
+  final Map<String, Map<String, List<String>>> _departmentMajorSubject = {
+    'Computer and Information Technology': {
+      'Computer Science': [
+        'Algorithms and Data Structures',
+        'Computer Architecture',
+        'Operating Systems',
+        'Database Systems',
+        'C++'
+      ],
+      'Information Technology': [
+        'Mobile Application Development',
+        'Human-Computer Interaction',
+        'Data Science',
+      ],
+      'Artificial Intelligence': [
+        'Machine Learning',
+        'Robotics',
+        'Deep Learning',
+        'AI in Business'
+      ]
+    },
+    'Engineering': {
+      'Mechanical Engineering': [
+        'Fluid Mechanics',
+        'Mechatronics',
+        'Automotive Engineering',
+      ],
+      'Electrical Engineering': [
+        'Power Electronics',
+        'Control Systems',
+        'Digital Electronics',
+      ],
+    },
+  };
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       if (_selectedDateTime == null) {

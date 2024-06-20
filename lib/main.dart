@@ -14,6 +14,7 @@ import 'package:appwithapi/book/displaybookpage.dart';
 import 'package:appwithapi/book/exchangebookpage.dart';
 import 'package:appwithapi/connectingPage/firstconnetc.dart';
 import 'package:appwithapi/connectingPage/secondconnect.dart';
+import 'package:appwithapi/connectingPage/Welcomepage.dart';
 import 'package:appwithapi/poll/CreateVoteForm.dart';
 import 'package:appwithapi/poll/list.dart';
 import 'package:appwithapi/poll/votelist.dart';
@@ -41,40 +42,40 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Student LoginPage',
-      initialRoute: '/ LoginStateless',
-      routes: {
-        '/ LoginStateless': (context) => StudentLoginPage(),
-        '/ StudentrRegistrationPage': (context) => StudentRegistrationPage(),
-        '/Home': (context) => Home(),
-        'ProfileScreen': (context) => ProfileScreen(),
-        'SettingForStudents': (context) => SettingsPage(),
-        'StudentsWhoWantToTeachScreen': (context) =>
-            StudentsWhoWantToTeachScreen(),
-        "Menu": (context) => Menu(),
-        "Fitring": (context) => Fitring(),
-        'Dashboured': (context) => Dashboured(),
-        'VotingScreen': (context) => VotingScreen(),
-        'CreateVoteForm': (context) => CreateVoteForm(),
-        "VoteList": (context) => VoteList(),
-        'VotedList': (context) => VotedList(),
-        'TeachOrNotScreen': (context) => TeachOrNotScreen(),
-        'Secondconnect': (context) => Secondconnect(),
-        'Firstconnet': (context) => Firstconnet(),
-        'CollegeListPage': (context) => CollegeListPage(),
-        ' AddBookPage': (context) => AddBookPage(),
-        ' DepartmentListPage': (context) => DepartmentListPage(),
-        'ExchangeBookPage': (context) => ExchangeBookPage(),
-        'DisplayBookPage': (context) => DisplayBookPage(),
-        '/houses': (context) => HousingPage(),
-        '/addHouse': (context) => AddHousePage(),
-        '/HouseDetailsPage': (context) =>
-            DisplayHouseDetailPage(houseDetails: HouseDetails.defaultData()),
-        'ResetPasswordPage': (context) => ResetPasswordPage(),
-        'houseownerloginpage': (context) => HouseOwnerLoginPage(),
-        'houseownerregister': (context) => HouseOwnerRegistrationPage(),
-      },
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Student LoginPage',
+        initialRoute: "Welcomepage",
+        routes: {
+          '/ LoginStateless': (context) => StudentLoginPage(),
+          '/ StudentrRegistrationPage': (context) => StudentRegistrationPage(),
+          '/Home': (context) => Home(),
+          'ProfileScreen': (context) => ProfileScreen(),
+          'SettingForStudents': (context) => SettingsPage(),
+          'StudentsWhoWantToTeachScreen': (context) =>
+              StudentsWhoWantToTeachScreen(),
+          "Menu": (context) => Menu(),
+          "Fitring": (context) => Fitring(),
+          'Dashboured': (context) => Dashboured(),
+          'VotingScreen': (context) => VotingScreen(),
+          'CreateVoteForm': (context) => CreateVoteForm(),
+          "VoteList": (context) => VoteList(),
+          'VotedList': (context) => VotedList(),
+          'TeachOrNotScreen': (context) => TeachOrNotScreen(),
+          'Secondconnect': (context) => Secondconnect(),
+          'Firstconnet': (context) => Firstconnet(),
+          'CollegeListPage': (context) => CollegeListPage(),
+          ' AddBookPage': (context) => AddBookPage(),
+          ' DepartmentListPage': (context) => DepartmentListPage(),
+          'ExchangeBookPage': (context) => ExchangeBookPage(),
+          'DisplayBookPage': (context) => DisplayBookPage(),
+          '/houses': (context) => HousingPage(),
+          '/addHouse': (context) => AddHousePage(),
+          '/HouseDetailsPage': (context) =>
+              DisplayHouseDetailPage(houseDetails: HouseDetails.defaultData()),
+          'ResetPasswordPage': (context) => ResetPasswordPage(),
+          'houseownerloginpage': (context) => HouseOwnerLoginPage(),
+          'houseownerregister': (context) => HouseOwnerRegistrationPage(),
+          "Welcomepage": (context) => Welcomepage()
+        });
   }
 }
