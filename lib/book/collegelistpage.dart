@@ -54,11 +54,10 @@ class CollegeListPage extends StatelessWidget {
                   child: Card(
                     elevation: 5,
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(20.0), // Adjust border radius
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Container(
-                      height: 100, // Adjust the height of the card
+                      height: 100,
                       padding: EdgeInsets.all(8.0),
                       child: Center(
                         child: Text(

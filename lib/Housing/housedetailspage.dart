@@ -1,220 +1,10 @@
-/*
-
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/Housing/pages/HousesPage.dart';
-
-class HouseDetails {
-  final String houseName;
-  final String housePrice;
-  final int occupants;
-  final int rooms;
-  final List<String> imageUrls;
-  final String gender;
-  final String email;
-  final String bathrooms;
-  final String userId;
-
-  HouseDetails({
-    required this.houseName,
-    required this.housePrice,
-    required this.occupants,
-    required this.rooms,
-    required this.imageUrls,
-    required this.gender,
-    required this.email,
-    required this.bathrooms,
-    required this.userId,
-  });
-
-  factory HouseDetails.defaultData() {
-    return HouseDetails(
-      houseName: 'Example House',
-      imageUrls: [
-        'https://via.placeholder.com/300',
-        'https://via.placeholder.com/300',
-        'https://via.placeholder.com/300',
-      ],
-      occupants: 4,
-      bathrooms: '2',
-      rooms: 3,
-      gender: 'Any',
-      email: 'example@example.com',
-      userId: 'defaultUserId',
-      housePrice: 'price',
-    );
-  }
-}
-
-class DisplayHouseDetailPage extends StatelessWidget {
-  final HouseDetails houseDetails;
-
-  DisplayHouseDetailPage({Key? key, required this.houseDetails}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user = auth.currentUser;
-    bool enabled = user != null && houseDetails.userId == user.uid;
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text(houseDetails.houseName),
-        actions: [
-          if (enabled)
-            PopupMenuButton(
-              itemBuilder: (BuildContext context) {
-                return [
-                  if (enabled)
-                    PopupMenuItem(
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit),
-                          SizedBox(width: 10),
-                          Text('Edit'),
-                        ],
-                      ),
-                      value: 'Edit',
-                      onTap: () {
-                        // Handle edit action
-                      },
-                    ),
-                  if (enabled)
-                    PopupMenuItem(
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete),
-                          SizedBox(width: 10),
-                          Text('Delete'),
-                        ],
-                      ),
-                      value: 'Delete',
-                      onTap: () async {
-                        
-    try {
-      // Get a reference to the Firestore collection
-      CollectionReference housesCollection = FirebaseFirestore.instance.collection('users').doc(houseDetails.userId).collection('houses');
-
-      // Construct a query to find the document with the specified values
-      QuerySnapshot querySnapshot = await housesCollection
-        .where('houseName', isEqualTo: houseDetails.houseName)
-      
-        
-        .get();
-
-      // Check if the query returned any documents
-      if (querySnapshot.docs.isNotEmpty) {
-        // Delete the first document found (assuming there's only one document with the specified values)
-        await housesCollection.doc(querySnapshot.docs.first.id).delete();
-           
-        // Show a success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('House deleted successfully'),
-          ),
-
-
-        );
-                              Navigator.push(context,MaterialPageRoute(builder: (context)=> HousingPage()));
-
-      } else {
-        // Show a message indicating that no matching house was found
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No matching house found'),
-          ),
-        );
-      }
-    } catch (e) {
-      // Show an error message if deletion fails
-      print('Error deleting house: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to delete house. Please try again later.'),
-        ),
-      );
-    }
-  },
-                      
-
-
-
-
-
-                    ),
-                ];
-              },
-            ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'title',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(height: 10),
-            // Display images
-            Container(
-              height: 200,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: houseDetails.imageUrls.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.network(
-                      houseDetails.imageUrls[index],
-                      width: 200,
-                      fit: BoxFit.cover,
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 20),
-            ListTile(
-              leading: Icon(Icons.people, color: Colors.blue),
-              title: Text('Occupants: ${houseDetails.occupants}'),
-            ),
-            ListTile(
-              leading: Icon(Icons.bathtub, color: Colors.blue),
-              title: Text('Bathrooms: ${houseDetails.bathrooms}'),
-            ),
-            ListTile(
-              leading: Icon(Icons.home, color: Colors.blue),
-              title: Text('Rooms: ${houseDetails.rooms}'),
-            ),
-            ListTile(
-              leading: Icon(Icons.person, color: Colors.blue),
-              title: Text('Tenant Gender: ${houseDetails.gender}'),
-            ),
-            ListTile(
-              leading: Icon(Icons.email, color: Colors.blue),
-              title: Text('Email: ${houseDetails.email}'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/
-
 import 'package:appwithapi/Cstum/constant.dart';
 import 'package:appwithapi/Housing/HousesPage.dart';
 import 'package:appwithapi/Housing/edithousepage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DisplayHouseDetailPage extends StatefulWidget {
@@ -230,7 +20,8 @@ class _DisplayHouseDetailPageState extends State<DisplayHouseDetailPage> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-
+    final double latitude = widget.houseDetails.latitude;
+    final double longitude = widget.houseDetails.longitude;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
@@ -249,13 +40,20 @@ class _DisplayHouseDetailPageState extends State<DisplayHouseDetailPage> {
                       userId: widget.houseDetails.userId,
                       houseData: {
                         'houseName': widget.houseDetails.houseName,
-                        'price': widget.houseDetails.housePrice.toDouble(),
+                        'price': widget.houseDetails.housePrice,
                         'numRooms': widget.houseDetails.rooms,
                         'numBathrooms': widget.houseDetails.bathrooms,
                         'gender': widget.houseDetails.gender,
                         'numOccupants': widget.houseDetails.occupants,
                         'email': widget.houseDetails.email,
                         'imageUrls': widget.houseDetails.imageUrls,
+                        'latitude': widget.houseDetails.latitude,
+                        'longitude': widget.houseDetails.longitude,
+                        'location': widget.houseDetails.location,
+                        'isAvailable': widget.houseDetails.isAvailable,
+                        'hasFreeInternet': widget.houseDetails.hasFreeInternet,
+                        'additionalDetails':
+                            widget.houseDetails.additionalDetails
                       },
                     ),
                   ),
@@ -384,6 +182,35 @@ class _DisplayHouseDetailPageState extends State<DisplayHouseDetailPage> {
               title: Text('Email: ${widget.houseDetails.email}'),
               onTap: () => _launchEmail(widget.houseDetails.email),
             ),
+
+            ListTile(
+              leading: Icon(Icons.check, color: kPrimaryColor),
+              title: Text(
+                  'Available: ${widget.houseDetails.isAvailable ? 'Yes' : 'No'}'),
+            ),
+
+            ListTile(
+              leading: Icon(Icons.wifi, color: kPrimaryColor),
+              title: Text(
+                  'Free Internet: ${widget.houseDetails.hasFreeInternet ? 'Yes' : 'No'}'),
+            ),
+
+            ListTile(
+              leading: Icon(Icons.more, color: kPrimaryColor),
+              title: Text(
+                  'Additional details: ${widget.houseDetails.additionalDetails}'),
+            ),
+
+            ListTile(
+              leading: Icon(Icons.location_on_outlined, color: kPrimaryColor),
+              title: Text('Location  ${widget.houseDetails.location}'),
+            ),
+
+            SizedBox(height: 10),
+
+            _buildMap(latitude, longitude),
+            SizedBox(height: 10),
+
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -567,48 +394,83 @@ class Review {
   }
 }
 
+Widget _buildMap(double latitude, double longitude) {
+  return Container(
+    width: double.infinity,
+    height: 200,
+    child: GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: LatLng(latitude, longitude),
+        zoom: 14,
+      ),
+      markers: {
+        Marker(
+          markerId: MarkerId('houseLocation'),
+          position: LatLng(latitude, longitude),
+        ),
+      },
+    ),
+  );
+}
+
 class HouseDetails {
+  final String userId;
   final String houseId;
   final String houseName;
   final double housePrice;
-  final int occupants;
   final int rooms;
-  final List<String> imageUrls;
-  final String gender;
-  final String email;
-  final String userId;
   final int bathrooms;
-
+  final String gender;
+  final int occupants;
+  final String email;
+  final List<String> imageUrls;
+  final double latitude;
+  final double longitude;
+  final String location;
+  final bool isAvailable;
+  final bool hasFreeInternet;
+  final String additionalDetails;
   HouseDetails({
+    required this.userId,
     required this.houseId,
     required this.houseName,
     required this.housePrice,
-    required this.occupants,
     required this.rooms,
-    required this.imageUrls,
-    required this.gender,
-    required this.email,
-    required this.userId,
     required this.bathrooms,
+    required this.gender,
+    required this.occupants,
+    required this.email,
+    required this.imageUrls,
+    required this.latitude,
+    required this.longitude,
+    required this.location,
+    required this.isAvailable,
+    required this.hasFreeInternet,
+    required this.additionalDetails,
   });
 
   factory HouseDetails.defaultData() {
     return HouseDetails(
-      houseId: 'defaultHouseId',
-      houseName: 'Example House',
-      imageUrls: [
-        'https://via.placeholder.com/300',
-        'https://via.placeholder.com/300',
-        'https://via.placeholder.com/300',
-      ],
-      occupants: 4,
-      bathrooms: 2,
-      rooms: 3,
-      gender: 'Any',
-      email: 'example@example.com',
-      userId: 'defaultUserId',
-      housePrice: 0,
-    );
+        houseId: 'defaultHouseId',
+        houseName: 'Example House',
+        housePrice: 0.0, // Default value for house price
+        imageUrls: [
+          'https://via.placeholder.com/300',
+          'https://via.placeholder.com/300',
+          'https://via.placeholder.com/300',
+        ],
+        occupants: 4,
+        bathrooms: 2,
+        rooms: 3,
+        gender: 'Any',
+        email: 'example@example.com',
+        userId: 'defaultUserId',
+        latitude: 0.0,
+        longitude: 0.0,
+        location: 'Default Location',
+        isAvailable: true,
+        hasFreeInternet: false,
+        additionalDetails: 'details of the house ');
   }
 }
 

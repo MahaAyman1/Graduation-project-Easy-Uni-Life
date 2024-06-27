@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import 'dart:io';
+
 class EditBookPage extends StatefulWidget {
   final Map<String, dynamic> bookData;
 
@@ -36,9 +38,11 @@ class _EditBookPageState extends State<EditBookPage> {
     bookNameController.text = widget.bookData['bookName'];
     bookPriceController.text = widget.bookData['bookPrice'];
     additionalDetailsController.text =
-        widget.bookData['additionalDetails'] ?? '';
+        widget.bookData['additionalDetails'] ?? 'additional details';
     imageUrls = List<String>.from(widget.bookData['imageUrls']);
     bookStatus = widget.bookData['bookStatus'] ?? 'New';
+    print("jgggggggggggggggggggggggggggggggggggggggggggg");
+    print(widget.bookData['additionalDetails']);
     print('initState - bookNameController: ${bookNameController.text}');
     print('initState - bookPriceController: ${bookPriceController.text}');
     print(
@@ -83,17 +87,11 @@ class _EditBookPageState extends State<EditBookPage> {
 
       List<String> uploadedImageUrls = await _uploadImages();
 
-      // Combine existing and new image URLs
       List<String> finalImageUrls = List.from(imageUrls)
         ..addAll(uploadedImageUrls);
 
       User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        // Debug information before updating Firestore
-        /*
-        String collegeId = widget.bookData['collegeId'];
-        String departmentId = widget.bookData['departmentId'];
-        String bookId = widget.bookData['id'];*/
         String collegeId = widget.bookData['collegeId'] ?? '';
         String departmentId = widget.bookData['departmentId'] ?? '';
         String bookId = widget.bookData['bookId'] ?? '';
@@ -169,10 +167,13 @@ class _EditBookPageState extends State<EditBookPage> {
                   controller: bookPriceController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter book price';
+                    if (value?.isEmpty ?? true) {
+                      return 'Price is required';
+                    } else if (double.tryParse(value!) == null) {
+                      return 'Enter a valid price';
+                    } else {
+                      return null;
                     }
-                    return null;
                   },
                 ),
                 SizedBox(height: 20),
@@ -303,24 +304,18 @@ class _EditBookPageState extends State<EditBookPage> {
 class FirestoreService {
   Future<String> uploadImage(File imageFile) async {
     try {
-      // Generate a unique ID for the image
       String imageName = DateTime.now().millisecondsSinceEpoch.toString();
 
-      // Reference to the Firebase Storage bucket
       Reference storageReference =
           FirebaseStorage.instance.ref().child('booksimages/$imageName');
 
-      // Upload the image file to Firebase Storage
       UploadTask uploadTask = storageReference.putFile(imageFile);
 
-      // Get the download URL of the uploaded image
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
       String imageUrl = await taskSnapshot.ref.getDownloadURL();
 
-      // Return the URL of the uploaded image
       return imageUrl;
     } catch (error) {
-      // Handle any errors that occur during the upload process
       print('Error uploading image: $error');
       throw error;
     }

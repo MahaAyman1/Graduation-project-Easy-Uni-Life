@@ -1,3 +1,4 @@
+import 'package:appwithapi/Cstum/constant.dart';
 import 'package:appwithapi/Housing/addhousepage.dart';
 import 'package:appwithapi/Housing/housedetailspage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,9 +18,10 @@ class MyHousingPage extends StatelessWidget {
     final User? user = auth.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Houses'),
+        backgroundColor: kPrimaryColor,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text('My Houses', style: TextStyle(color: Colors.white)),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.add),
@@ -66,18 +68,23 @@ class MyHousingPage extends StatelessWidget {
                 final List<String> imageUrls =
                     List<String>.from(houseData['imageUrls'] ?? []);
                 return HouseItem(
-                  houseName: houseData['houseName'] ?? '',
-                  housePrice: houseData['price'] ?? '',
-                  occupants:
-                      int.tryParse(houseData['numOccupants'].toString()) ?? 0,
-                  rooms: int.tryParse(houseData['numRooms'].toString()) ?? 0,
-                  imageUrls: imageUrls,
-                  userId: houseData['userId'],
-                  gender: houseData['gender'],
-                  email: houseData['email'],
-                  bathrooms: houseData['numBathrooms'],
-                  houseId: houseDocs[index].id,
-                );
+                    houseName: houseData['houseName'] ?? '',
+                    housePrice: houseData['price'] ?? '',
+                    occupants:
+                        int.tryParse(houseData['numOccupants'].toString()) ?? 0,
+                    rooms: int.tryParse(houseData['numRooms'].toString()) ?? 0,
+                    imageUrls: imageUrls,
+                    userId: houseData['userId'],
+                    gender: houseData['gender'],
+                    email: houseData['email'],
+                    bathrooms: houseData['numBathrooms'],
+                    houseId: houseDocs[index].id,
+                    latitude: houseData['latitude'],
+                    longitude: houseData['longitude'],
+                    location: houseData['location'] ?? '',
+                    isAvailable: houseData['isAvailable'],
+                    hasFreeInternet: houseData['hasFreeInternet'],
+                    additionalDetails: houseData['additionalDetails']);
               },
             );
           },
@@ -98,7 +105,12 @@ class HouseItem extends StatelessWidget {
   final String userId;
   final int bathrooms;
   final String houseId;
-
+  final double latitude;
+  final String location;
+  final double longitude;
+  final bool isAvailable;
+  final bool hasFreeInternet;
+  final String? additionalDetails;
   const HouseItem({
     required this.houseName,
     required this.housePrice,
@@ -110,6 +122,12 @@ class HouseItem extends StatelessWidget {
     required this.userId,
     required this.bathrooms,
     required this.houseId,
+    required this.latitude,
+    required this.location,
+    required this.longitude,
+    required this.isAvailable,
+    required this.hasFreeInternet,
+    this.additionalDetails,
   });
 
   @override
@@ -123,17 +141,23 @@ class HouseItem extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => DisplayHouseDetailPage(
               houseDetails: HouseDetails(
-                houseId: houseId,
-                houseName: houseName,
-                housePrice: housePrice,
-                occupants: occupants,
-                rooms: rooms,
-                imageUrls: imageUrls,
-                gender: gender,
-                email: email,
-                userId: userId,
-                bathrooms: bathrooms,
-              ),
+                  houseId: houseId,
+                  houseName: houseName,
+                  housePrice: housePrice,
+                  occupants: occupants,
+                  rooms: rooms,
+                  imageUrls: imageUrls,
+                  gender: gender,
+                  email: email,
+                  userId: userId,
+                  bathrooms: bathrooms,
+                  latitude: latitude,
+                  longitude: longitude,
+                  location: location,
+                  isAvailable: isAvailable,
+                  hasFreeInternet: hasFreeInternet,
+                  additionalDetails:
+                      additionalDetails ?? 'no additional details'),
             ),
           ),
         );

@@ -53,7 +53,6 @@ class BookItem extends StatelessWidget {
         );
       },
       child: Container(
-        //  color: ksecondaryColor,
         color: Colors.white,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

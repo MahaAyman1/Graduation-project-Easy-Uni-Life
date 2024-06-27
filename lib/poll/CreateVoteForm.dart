@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:appwithapi/Map/MarkerMapPage.dart';
 import 'package:appwithapi/Cstum/constant.dart';
+import 'package:geocoding/geocoding.dart';
+
+import '../Map/MarkerMapPage.dart';
 
 class CustomDropdown extends StatelessWidget {
   final String? value;
@@ -127,8 +129,8 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
   //= 'Computer and Information Technology';
   String? _selectedMajor;
   String? _selectedSubject;
-  double? _latitude;
-  double? _longitude;
+  double? latitude;
+  double? longitude;
 
   /*final Map<String, Map<String, List<String>>> _departmentMajorSubject = {
     'Computer and Information Technology': {
@@ -236,8 +238,8 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
             'location': _locationController.text,
             'preferredGender': _preferredGender,
             'time': _selectedDateTime,
-            'latitude': _latitude,
-            'longitude': _longitude,
+            'latitude': latitude,
+            'longitude': longitude,
             'gender': gender
           });
 
@@ -262,8 +264,8 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
         builder: (context) => MarkerMapPage(
           onLocationSelected: (latLng) {
             setState(() {
-              _latitude = latLng.latitude;
-              _longitude = latLng.longitude;
+              latitude = latLng.latitude;
+              longitude = latLng.longitude;
               _locationController.text = 'Location Selected';
             });
           },
@@ -323,10 +325,11 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
                 },
               ),
               SizedBox(height: 12),
-              Row(
+              /* Row(
                 children: [
                   Expanded(
                     child: CustomTextField(
+                      readOnly: true,
                       controller: _locationController,
                       hint: 'Location',
                       validator: (value) {
@@ -335,7 +338,6 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
                         }
                         return null;
                       },
-                      readOnly: true,
                     ),
                   ),
                   SizedBox(width: 12),
@@ -344,6 +346,36 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
                     child: Text('Pick Location'),
                   ),
                 ],
+              ),*/
+              CustomTextField1(
+                hint: 'Location',
+                controller: _locationController,
+                readOnly: true,
+                onTap: () async {
+                  final location = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MarkerMapPage(
+                        onLocationSelected: (location) {
+                          setState(() {
+                            latitude = location.latitude;
+                            longitude = location.longitude;
+                          });
+                        },
+                      ),
+                    ),
+                  );
+
+                  if (latitude != null && longitude != null) {
+                    List<Placemark> placemarks =
+                        await placemarkFromCoordinates(latitude!, longitude!);
+                    if (placemarks.isNotEmpty) {
+                      Placemark place = placemarks[0];
+                      _locationController.text =
+                          " ${place.subLocality}, ${place.locality}, ${place.country}";
+                    }
+                  }
+                },
               ),
               SizedBox(height: 12),
               CustomDropdown(
@@ -443,6 +475,87 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CustomTextField1 extends StatelessWidget {
+  final String? label;
+  final String hint;
+  final int maxLines;
+  final bool obscureText;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
+  final void Function(String?)? onSaved;
+  final Function(String)? onChanged;
+  final Future<void> Function()? onTap;
+  final TextInputType? keyboardType;
+  final bool? readOnly;
+
+  CustomTextField1({
+    Key? key,
+    this.label,
+    required this.hint,
+    this.maxLines = 1,
+    this.obscureText = false,
+    this.controller,
+    this.validator,
+    this.onSaved,
+    this.onChanged,
+    this.onTap,
+    this.readOnly,
+    this.keyboardType,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (label != null)
+          Text(
+            label!,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        if (label != null) SizedBox(height: 8),
+        TextFormField(
+          obscureText: obscureText,
+          onChanged: onChanged,
+          controller: controller,
+          onSaved: onSaved,
+          validator: (value) {
+            if (validator != null) {
+              return validator!(value);
+            } else {
+              if (value?.isEmpty ?? true) {
+                return 'Field is required';
+              } else {
+                return null;
+              }
+            }
+          },
+          cursorColor: kPrimaryColor,
+          maxLines: maxLines,
+          onTap: onTap,
+          readOnly: readOnly ?? false,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
+            hintText: hint,
+            border: buildBorder(),
+            enabledBorder: buildBorder(kPrimaryColor),
+            focusedBorder: buildBorder(kPrimaryColor),
+          ),
+        ),
+      ],
+    );
+  }
+
+  OutlineInputBorder buildBorder([Color? color]) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(color: color ?? Colors.white),
     );
   }
 }

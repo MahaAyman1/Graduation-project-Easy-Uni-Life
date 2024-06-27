@@ -1,6 +1,6 @@
 import 'package:appwithapi/Cstum/constant.dart';
 import 'package:appwithapi/Cstum/customTextField.dart';
-import 'package:appwithapi/authForStudent/Verify.dart';
+import 'package:appwithapi/authForStudent/Houseownerverify.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';

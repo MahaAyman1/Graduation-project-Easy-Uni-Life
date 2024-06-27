@@ -1,10 +1,10 @@
 import 'package:appwithapi/Housing/addhousepage.dart';
 import 'package:appwithapi/Housing/myhouse.dart';
 import 'package:appwithapi/authForStudent/HouseOwnerLoginPage.dart';
+import 'package:appwithapi/connectingPage/Welcomepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HousingPage extends StatefulWidget {
@@ -23,6 +23,8 @@ class _HousingPageState extends State<HousingPage> {
   @override
   Widget build(BuildContext context) {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final currentUser = FirebaseAuth.instance.currentUser;
+    bool showAddHouseIcon = currentUser?.email?.endsWith('.edu.jo') != true;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -34,49 +36,51 @@ class _HousingPageState extends State<HousingPage> {
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.home),
-            tooltip: 'My House ',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return MyHousingPage();
-                  },
-                ),
-              );
-            },
-          ),
+          if (showAddHouseIcon)
+            IconButton(
+              icon: const Icon(Icons.home),
+              tooltip: 'My House',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return MyHousingPage();
+                    },
+                  ),
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.filter_alt),
             tooltip: 'Filter',
             onPressed: _showFilterDialog,
           ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add House',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return AddHousePage();
-                  },
-                ),
-              );
-            },
-          ),
+          if (showAddHouseIcon)
+            IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: 'Add House',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return AddHousePage();
+                    },
+                  ),
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Log Out ',
+            tooltip: 'Log Out',
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) {
-                    return HouseOwnerLoginPage();
+                    return Welcomepage();
                   },
                 ),
               );
@@ -123,6 +127,12 @@ class _HousingPageState extends State<HousingPage> {
                   email: houseData['email'] ?? '',
                   bathrooms: houseData['numBathrooms'] ?? 0,
                   houseId: houseDocs[index].id,
+                  latitude: houseData['latitude'],
+                  longitude: houseData['longitude'],
+                  location: houseData['location'] ?? '',
+                  isAvailable: houseData['isAvailable'] ?? '',
+                  hasFreeInternet: houseData['hasFreeInternet'] ?? '',
+                  additionalDetails: houseData['additionalDetails'] ?? '',
                 );
               },
             );
@@ -221,8 +231,8 @@ class _HousingPageState extends State<HousingPage> {
                       items: <String>['', 'male', 'female', 'male and female']
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value.isNotEmpty ? value : 'Any Gender'),
+                          value: value.isNotEmpty ? value : 'Gender',
+                          child: Text(value.isNotEmpty ? value : ' Gender'),
                         );
                       }).toList(),
                     );

@@ -13,18 +13,15 @@ class ExchangeBookPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<ExchangeBookPage> createState() => _ExchangeBookPageState();
+  _ExchangeBookPageState createState() => _ExchangeBookPageState();
 }
 
 class _ExchangeBookPageState extends State<ExchangeBookPage> {
-  List<QueryDocumentSnapshot<Map<String, dynamic>>> allResults = [];
-  List<QueryDocumentSnapshot<Map<String, dynamic>>> filteredBooks = [];
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    getBookStream();
     searchController.addListener(_onSearchChanged);
   }
 
@@ -35,67 +32,12 @@ class _ExchangeBookPageState extends State<ExchangeBookPage> {
     super.dispose();
   }
 
-  _onSearchChanged() {
-    filterBooks();
-  }
-
-  getBookStream() async {
-    try {
-      String? collegeId = widget.collegeId;
-      String? departmentId = widget.departmentId;
-
-      if (collegeId == null || departmentId == null) {
-        print('collegeId or departmentId is null');
-        return;
-      }
-
-      QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore
-          .instance
-          .collection('Colleges')
-          .doc(collegeId)
-          .collection('Departments')
-          .doc(departmentId)
-          .collection('Books')
-          .orderBy('bookName')
-          .get();
-
-      // Debug: Print fetched data
-      data.docs.forEach((doc) => print('Fetched book: ${doc.data()}'));
-
-      setState(() {
-        allResults = data.docs;
-        filteredBooks = allResults;
-      });
-
-      print('Fetched ${data.docs.length} books');
-    } catch (e) {
-      print('Error fetching books: $e');
-    }
-  }
-
-  filterBooks() {
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> results = [];
-    if (searchController.text.isEmpty) {
-      results = allResults;
-    } else {
-      results = allResults
-          .where((book) => book['bookName']
-              .toString()
-              .toLowerCase()
-              .contains(searchController.text.toLowerCase()))
-          .toList();
-    }
-    setState(() {
-      filteredBooks = results;
-      print('Filtered to ${results.length} books');
-    });
+  void _onSearchChanged() {
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
-    final secondaryColor = Theme.of(context).colorScheme.secondary;
-
     return Scaffold(
       backgroundColor: kPrimaryColor,
       appBar: AppBar(
@@ -107,8 +49,7 @@ class _ExchangeBookPageState extends State<ExchangeBookPage> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: 'Add Book',
+            icon: Icon(Icons.add),
             onPressed: () {
               Navigator.push(
                 context,
@@ -125,97 +66,128 @@ class _ExchangeBookPageState extends State<ExchangeBookPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 22, top: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 10.0,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search by book name',
-                    hintStyle: TextStyle(color: kPrimaryColor),
-                    border: InputBorder.none,
-                    prefixIcon: Icon(Icons.search, color: kPrimaryColor),
-                    contentPadding: EdgeInsets.symmetric(vertical: 15.0),
-                    isDense: true,
+      body: Column(
+        children: [
+          ////////////////
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    offset: Offset(0, 4),
                   ),
-                  style: TextStyle(color: Colors.black),
+                ],
+              ),
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search by book name',
+                  hintStyle: TextStyle(color: kPrimaryColor),
+                  border: InputBorder.none,
+                  prefixIcon: Icon(Icons.search, color: kPrimaryColor),
+                  contentPadding: EdgeInsets.symmetric(vertical: 15.0),
+                  isDense: true,
                 ),
+                style: TextStyle(color: Colors.black),
               ),
             ),
-            Expanded(
-              child: filteredBooks.isEmpty
-                  ? Center(
-                      child: Text('No books found',
-                          style: TextStyle(color: Colors.white)))
-                  : GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                      ),
-                      itemCount: filteredBooks.length,
-                      itemBuilder: (context, index) {
-                        final book = filteredBooks[index];
-                        List<dynamic> imageUrlsDynamic =
-                            book['imageUrls'] ?? [];
-                        List<String> imageUrls = imageUrlsDynamic
-                            .map((url) => url.toString())
-                            .toList();
+          ),
 
-                        String bookId = book.id;
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DisplayBookPage(
-                                  bookName: book['bookName'],
-                                  bookPrice: book['bookPrice'],
-                                  imageUrls: imageUrls,
-                                  email: book['email'],
-                                  additionalDetails: book['additionalDetails'],
-                                  bookStatus: book['bookStatus'],
-                                  bookId: bookId,
-                                  collegeId: widget.collegeId,
-                                  departmentId: widget.departmentId,
-                                  userId: book['userId'],
-                                ),
-                              ),
-                            );
-                          },
-                          child: BookItem(
-                            bookName: book['bookName'],
-                            bookPrice: book['bookPrice'],
-                            imageUrls: imageUrls,
-                            email: book['email'],
-                            additionalDetails: book['additionalDetails'],
-                            bookStatus: book['bookStatus'],
-                            bookId: bookId,
-                            collegeId: widget.collegeId,
-                            departmentId: widget.departmentId,
-                            userId: book['userId'],
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Colleges')
+                  .doc(widget.collegeId)
+                  .collection('Departments')
+                  .doc(widget.departmentId)
+                  .collection('Books')
+                  .orderBy('bookName')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No books found'));
+                }
+
+                List<QueryDocumentSnapshot> filteredBooks = snapshot.data!.docs;
+                if (searchController.text.isNotEmpty) {
+                  filteredBooks = snapshot.data!.docs
+                      .where((book) => book['bookName']
+                          .toString()
+                          .toLowerCase()
+                          .contains(searchController.text.toLowerCase()))
+                      .toList();
+                }
+
+                return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                  ),
+                  itemCount: filteredBooks.length,
+                  itemBuilder: (context, index) {
+                    final book = filteredBooks[index];
+                    List<dynamic> imageUrlsDynamic = book['imageUrls'] ?? [];
+                    List<String> imageUrls =
+                        imageUrlsDynamic.map((url) => url.toString()).toList();
+
+                    String bookId = book.id;
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DisplayBookPage(
+                              bookName: book['bookName'],
+                              bookPrice: book['bookPrice'],
+                              imageUrls: imageUrls,
+                              email: book['email'],
+                              additionalDetails: book['additionalDetails'],
+                              bookStatus: book['bookStatus'],
+                              bookId: bookId,
+                              collegeId: widget.collegeId,
+                              departmentId: widget.departmentId,
+                              userId: book['userId'],
+                            ),
                           ),
                         );
                       },
-                    ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: BookItem(
+                          bookName: book['bookName'],
+                          bookPrice: book['bookPrice'],
+                          imageUrls: imageUrls,
+                          email: book['email'],
+                          additionalDetails: book['additionalDetails'],
+                          bookStatus: book['bookStatus'],
+                          bookId: bookId,
+                          collegeId: widget.collegeId,
+                          departmentId: widget.departmentId,
+                          userId: book['userId'],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

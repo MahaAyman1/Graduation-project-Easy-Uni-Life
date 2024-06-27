@@ -66,7 +66,6 @@ class _AddBookPageState extends State<AddBookPage> {
 
       User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        // Generate a new document ID
         DocumentReference docRef = FirebaseFirestore.instance
             .collection('Colleges')
             .doc(widget.collegeId)
@@ -82,7 +81,7 @@ class _AddBookPageState extends State<AddBookPage> {
           'bookName': bookNameController.text,
           'bookPrice': bookPriceController.text,
           'imageUrls': uploadedImageUrls,
-          'email': currentUser.email, // Use authenticated user's email
+          'email': currentUser.email,
           'userId': currentUser.uid,
           'bookStatus': bookStatus,
           'additionalDetails': additionalDetailsController.text,
@@ -99,7 +98,7 @@ class _AddBookPageState extends State<AddBookPage> {
         additionalDetailsController.clear();
         setState(() {
           imageUrls.clear();
-          bookStatus = 'New'; // Reset status
+          bookStatus = 'New';
         });
       }
     }
@@ -136,10 +135,13 @@ class _AddBookPageState extends State<AddBookPage> {
                   controller: bookPriceController,
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter book price';
+                    if (value?.isEmpty ?? true) {
+                      return 'Price is required';
+                    } else if (double.tryParse(value!) == null) {
+                      return 'Enter a valid price';
+                    } else {
+                      return null;
                     }
-                    return null;
                   },
                 ),
                 SizedBox(height: 20),
@@ -258,24 +260,18 @@ class _AddBookPageState extends State<AddBookPage> {
 class FirestoreService {
   Future<String> uploadImage(File imageFile) async {
     try {
-      // Generate a unique ID for the image
       String imageName = DateTime.now().millisecondsSinceEpoch.toString();
 
-      // Reference to the Firebase Storage bucket
       Reference storageReference =
           FirebaseStorage.instance.ref().child('booksimages/$imageName');
 
-      // Upload the image file to Firebase Storage
       UploadTask uploadTask = storageReference.putFile(imageFile);
 
-      // Get the download URL of the uploaded image
       TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
       String imageUrl = await taskSnapshot.ref.getDownloadURL();
 
-      // Return the URL of the uploaded image
       return imageUrl;
     } catch (error) {
-      // Handle any errors that occur during the upload process
       print('Error uploading image: $error');
       throw error;
     }
