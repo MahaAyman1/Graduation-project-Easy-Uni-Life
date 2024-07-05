@@ -17,7 +17,6 @@ import 'package:appwithapi/connectingPage/secondconnect.dart';
 import 'package:appwithapi/connectingPage/Welcomepage.dart';
 import 'package:appwithapi/poll/CreateVoteForm.dart';
 import 'package:appwithapi/poll/list.dart';
-import 'package:appwithapi/poll/votelist.dart';
 import 'package:appwithapi/poll/voting.dart';
 import 'package:appwithapi/tutoring/Setting.dart';
 import 'package:appwithapi/tutoring/ThechingOrNot.dart';
@@ -58,7 +57,6 @@ class MyApp extends StatelessWidget {
           'Dashboured': (context) => Dashboured(),
           'VotingScreen': (context) => VotingScreen(),
           'CreateVoteForm': (context) => CreateVoteForm(),
-          "VoteList": (context) => VoteList(),
           'VotedList': (context) => VotedList(),
           'TeachOrNotScreen': (context) => TeachOrNotScreen(),
           'Secondconnect': (context) => Secondconnect(),

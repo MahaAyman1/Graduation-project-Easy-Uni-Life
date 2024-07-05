@@ -101,8 +101,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
-                            backgroundColor:
-                                Colors.transparent, // Transparent background
+                            backgroundColor: Colors.transparent,
                           ),
                           onPressed: _resetPassword,
                           child: Ink(

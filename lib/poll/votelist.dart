@@ -1,4 +1,4 @@
-import 'package:appwithapi/Cstum/constant.dart';
+/*import 'package:appwithapi/Cstum/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -186,53 +186,6 @@ class _VoteTileState extends State<VoteTile> {
     );
   }
 
-  /*void _vote(String voteId, String field, bool isUpVote) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You must be signed in to vote')),
-      );
-      return;
-    }
-
-    String userId = user.uid;
-
-    // Retrieve vote data
-    DocumentSnapshot voteSnapshot =
-        await FirebaseFirestore.instance.collection('Votes').doc(voteId).get();
-    Map<String, dynamic>? voteData =
-        voteSnapshot.data() as Map<String, dynamic>?;
-
-    // Check if voters map exists and if user has already voted
-    if (voteData != null && voteData['voters'] != null) {
-      Map<String, dynamic> voters = voteData['voters'];
-      if (voters.containsKey(userId)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('You have already voted for this option')),
-        );
-        return;
-      }
-    }
-
-    setState(() {
-      if (isUpVote) {
-        votedUp = true;
-        votedDown = false;
-      } else {
-        votedUp = false;
-        votedDown = true;
-      }
-    });
-
-    String voteField = isUpVote ? 'optionAVotes' : 'optionBVotes';
-
-    // Update vote data in Firestore
-    await FirebaseFirestore.instance.collection('Votes').doc(voteId).update({
-      voteField: FieldValue.increment(1),
-      'voters.$userId': isUpVote ? 'optionA' : 'optionB',
-    });
-  }
-*/
   void _vote(String voteId, String field, bool isUpVote) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -324,3 +277,4 @@ class VotersListScreen extends StatelessWidget {
     );
   }
 }
+*/

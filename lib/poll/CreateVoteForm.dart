@@ -131,36 +131,6 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
   String? _selectedSubject;
   double? latitude;
   double? longitude;
-
-  /*final Map<String, Map<String, List<String>>> _departmentMajorSubject = {
-    'Computer and Information Technology': {
-      'Computer Science': [
-        'Algorithms and Data Structures',
-        'Computer Architecture',
-        'Operating Systems',
-        'Database Systems',
-        'C++'
-      ],
-      'Information Technology': [
-        'Subject 4',
-        'Subject 5',
-        'Subject 6',
-      ],
-    },
-    'Engineering': {
-      'Mechanical Engineering': [
-        'Subject A',
-        'Subject B',
-        'Subject C',
-      ],
-      'Electrical Engineering': [
-        'Subject X',
-        'Subject Y',
-        'Subject Z',
-      ],
-    },
-  };
-*/
   final Map<String, Map<String, List<String>>> _departmentMajorSubject = {
     'Computer and Information Technology': {
       'Computer Science': [
@@ -325,28 +295,6 @@ class _CreateVoteFormState extends State<CreateVoteForm> {
                 },
               ),
               SizedBox(height: 12),
-              /* Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: true,
-                      controller: _locationController,
-                      hint: 'Location',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Location is required';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  ElevatedButton(
-                    onPressed: _selectLocation,
-                    child: Text('Pick Location'),
-                  ),
-                ],
-              ),*/
               CustomTextField1(
                 hint: 'Location',
                 controller: _locationController,
